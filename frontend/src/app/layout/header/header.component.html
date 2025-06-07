@@ -1,0 +1,56 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a
+      class="navbar-brand"
+      (click)="setActiveMenuItem(menuItems[0].name)"
+      routerLink="/">
+      DataDrift
+    </a>
+    <ul class="navbar-nav ml-auto flex-row flex-nowrap align-items-center">
+      @if (currentUser$ | async; as currentUser) {
+        @for (menu of menuItems; track menu.link) {
+          <li class="nav-item mx-2" (click)="setActiveMenuItem(menu.name)">
+            @if (menu.customDisplay == 'Profile') {
+              <a
+                class="nav-link d-flex align-items-center"
+                [ngClass]="{'active': menu.isActive}"
+                [routerLink]="menu.link">
+                <img
+                  [src]="currentUser.image || defaultProfileImg"
+                  class="rounded-circle user-pic m-2"
+                  alt="User profile image"
+                  style="width: 1.5rem;"
+                />
+                <span>{{ currentUser.username }}</span>
+              </a>
+            } @else {
+              <ng-container
+                *ngTemplateOutlet="normalLink; context: {$implicit: menu}">
+              </ng-container>
+            }
+          </li>
+        }
+      } @else {
+        @for (menu of menuItems; track menu.link) {
+          <li class="nav-item mx-2" (click)="setActiveMenuItem(menu.name)">
+            <ng-container
+              *ngTemplateOutlet="normalLink; context: {$implicit: menu}">
+            </ng-container>
+          </li>
+        }
+      }
+    </ul>
+  </div>
+</nav>
+
+<ng-template #normalLink let-menu>
+  <a
+    class="nav-link d-flex align-items-center"
+    [ngClass]="{'active': menu.isActive}"
+    [routerLink]="menu.link">
+    @if (menu.icon) {
+      <i [class]="menu.icon"></i>&nbsp;
+    }
+    {{ menu.name }}
+  </a>
+</ng-template>
